@@ -1,0 +1,5 @@
+*.tif
+*.isxd
+*.tiff
+__pycache__/*
+*.mmap
