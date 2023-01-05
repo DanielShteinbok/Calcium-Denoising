@@ -8,11 +8,18 @@ def mse(a, b):
     return np.sum((a - b)**2)/a.shape[-1]/a.shape[-2]
 
 def get_similar(full_stack, index, num_imgs):
+    # this just holds the two "edges"
     other_inds = [index-1, index+1]
-    out_stack = np.empty((num_imgs, full_stack.shape[1], full_stack.shape[2]))
+
+    # rather than keeping a stack of the frames we want, we'll just keep a list of their indices
+    # this is more computationally efficient, but also allows for dynamically changing
+    # the number of images we care about, e.g. due to thresholding
+    out_stack_inds = []
+    #out_stack = np.empty((num_imgs, full_stack.shape[1], full_stack.shape[2]))
     def add_img(i, side):
         # side = 0 if adding previous, side=1 if adding next
-        out_stack[i, :, :] = full_stack[other_inds[side],:,:]
+        #out_stack[i, :, :] = full_stack[other_inds[side],:,:]
+        out_stack_inds.append(other_inds[side])
         other_inds[side] += 2*side - 1
     for i in range(num_imgs):
         if other_inds[1] >= full_stack.shape[0]:
@@ -23,7 +30,10 @@ def get_similar(full_stack, index, num_imgs):
             add_img(i, 1)
         else:
             add_img(i, 0)
-    return out_stack
+    #return out_stack
+    # this should return exactly the same way that it did before,
+    # only now we've changed the internal behaviour above
+    return full_stack[out_stack_inds, :, :]
 
 def full_denoising(full_stack, index, background, num_images=5, h=4):
     """
