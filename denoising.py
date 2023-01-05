@@ -43,7 +43,7 @@ def get_similar(full_stack, index, num_imgs, mse_threshold=None, print_mses=Fals
     # only now we've changed the internal behaviour above
     return full_stack[out_stack_inds, :, :]
 
-def full_denoising(full_stack, index, background, num_images=5, h=4):
+def full_denoising(full_stack, index, background, num_images=5, h=4, verbose=False):
     """
     Parameters:
         full_stack should be of shape (C, height, width) where height is the height of the image (e.g. 800)
@@ -55,7 +55,7 @@ def full_denoising(full_stack, index, background, num_images=5, h=4):
     #background)//2).astype(np.uint8), out_image, h=h)
     #background)//256).astype(np.uint8), out_image, h=h)
     dff_img = dff(
-        np.mean(get_similar(full_stack, index, num_images, print_mses=True), axis=0),
+        np.mean(get_similar(full_stack, index, num_images, print_mses=verbose), axis=0),
     background)
     cv2.fastNlMeansDenoising((dff_img/dff_img.max()*255).astype(np.uint8), out_image, h=h)
     #cv2.fastNlMeansDenoising((dff_img/2).astype(np.uint8), out_image, h=h)
